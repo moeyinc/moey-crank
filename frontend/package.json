@@ -17,6 +17,7 @@
     "color": "^2.0.0",
     "fs": "0.0.1-security",
     "jquery": "^3.2.1",
+    "matter-js": "^0.13.0",
     "reset-css": "^2.2.1",
     "stats.js": "^0.17.0",
     "vue": "^2.5.2",

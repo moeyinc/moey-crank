@@ -3,16 +3,15 @@
 ================================================== -->
 <template>
   <div
-    class="back-button-wrapper"
-    :style="getBGColor"
+    class="floating-button-wrapper"
+    :style="[getBGColor, {width: width + 'px', height: height + 'px', top: top, left: left, bottom: bottom, right: right}]"
     @mousedown="toggle"
     @mouseup="toggle"
     @mouseleave="resetClick"
     @click="$emit('clicked')">
-    <div class="text-wrapper">
+    <div class="text-wrapper" :style="{'font-size': fontSize + 'em', 'line-height': height + 'px'}">
       <div v-html="text" class="text"></div>
     </div>
-    <arrow-left-thick-icon class="arrow-left-thick-icon" />
   </div>
 </template>
 
@@ -20,39 +19,70 @@
  Vue Script
 ================================================== -->
 <script>
-import ArrowLeftThickIcon from 'vue-material-design-icons/arrow-left-thick.vue'
+import MixinMaterials from '@/mixins/materials.js'
 
 export default {
-  name: 'back-button',
+  name: 'floating-button',
+  mixins: [MixinMaterials],
   data () {
     return {
+      elev: 2,
+      usualElev: 2,
+      raisedElev: 16,
       isActive: false
     }
   },
   props: {
+    width: Number,
+    height: Number,
+    top: {
+      type: String,
+      default: 'auto'
+    },
+    left: {
+      type: String,
+      default: 'auto'
+    },
+    bottom: {
+      type: String,
+      default: 'auto'
+    },
+    right: {
+      type: String,
+      default: 'auto'
+    },
     text: String,
+    fontSize: Number,
     bgColor: String,
     bgColorActive: String,
     color: String,
-    colorActive: String
+    colorActive: String,
+    customElev: Number
   },
-  components: {
-    ArrowLeftThickIcon
+  created () {
+    // set a custom elevation
+    if (this.customElev !== undefined) {
+      this.elev = this.customElev
+      this.usualElev = this.customElev
+    }
   },
-  mounted () {
-    // align svg vertically middle
-    let arrow = document.getElementsByClassName('material-design-icon__svg')[0]
-    arrow.style.position = 'absolute'
-    arrow.style.top = '50%'
-    arrow.style.transform = 'translateY(-50%)'
-    let textLeftPos = document.getElementsByClassName('text')[0].offsetLeft
-    arrow.style.left = textLeftPos - arrow.clientWidth - 10 + 'px'
+  watch: {
+    isActive (val) {
+      if (val === true) {
+        // active
+        this.elev = this.raisedElev
+      } else {
+        // inactive
+        this.elev = this.usualElev
+      }
+      // re-apply shadow
+      this.applyShadow()
+    }
   },
   computed: {
     // change color when it's clicked
     getBGColor () {
       if (this.isActive) {
-        console.log('hey')
         return {
           'background-color': this.bgColorActive,
           'color': this.colorActive
@@ -82,31 +112,16 @@ export default {
  Vue Style
 ================================================== -->
 <style scoped>
-.back-button-wrapper {
+.floating-button-wrapper {
   position: absolute;
-  display: inline-block;
-  width: 200px;
-  height: 100%;
-  z-index: 100;
+  border-radius: 10px;
 }
 
 .text-wrapper {
-  position: absolute;
   width: 100%;
-  top: 50%;
-  transform: translateY(-50%);
   text-align: center;
 }
 
 .text {
-  display: inline-block;
-  margin: 0.5em;
-  font-size: 0.6em;
-}
-
-.arrow-left-thick-icon {
-  position: absolute;
-  fill: currentColor;
-  height: 100%;
 }
 </style>
