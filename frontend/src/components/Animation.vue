@@ -75,7 +75,7 @@ export default {
     *****************************************/
     setBGImage (n) {
       const START_FRAME = 200
-      const STEP = 10
+      const STEP = 5 // 10
       let index = START_FRAME + n * STEP
       return {
         'background-image': 'url(' + this.getImageAssetFilePath('tom_jerry/' + index + '.png') + ')',
@@ -95,7 +95,7 @@ export default {
 
       config.$bookBlock.bookblock({
         orientation : 'horizontal',
-        speed : 100,
+        speed : 1, // 100
         shadowSides : 0.8,
         shadowFlip : 0.4
       })

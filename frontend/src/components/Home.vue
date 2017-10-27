@@ -76,7 +76,7 @@
         </li>
         <li>
           <image-button
-            :img="getImageAssetFilePath('placeholder.jpg')"
+            :img="getImageAssetFilePath('interactive-game.png')"
             :text="'Interactive Game'"
             :width="400"
             :height="300"

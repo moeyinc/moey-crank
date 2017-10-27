@@ -15,7 +15,7 @@
       :button-text-color-active="'#ffffff'"
       @back-button-clicked="jumpTo('home')"
       >
-      <h1 slot="content-title">Mutoscope</h1>
+      <h1 slot="content-title">Interactive Game</h1>
     </content-header>
     <main id="matterjs-canvas">
     </main>
@@ -75,7 +75,8 @@ export default {
     return {
       ball: null,
       constraint: null,
-      angle: 0
+      angle: 0,
+      activated: false
     }
   },
   created () {
@@ -91,27 +92,13 @@ export default {
     addEventListenerForSocket () {
       this.$bus.$on('rotate-forward', ($event) => {
         console.log('rotate forward')
-        // prepare angle values
-        const angleStep = 1
-        let currentRad = this.getRadians(this.angle)
-        let nextRad = this.getRadians(this.angle + angleStep)
-        this.angle += angleStep
-
-        // do math to get the delta x and delta y
-        let r = this.constraint.length
-        let dx = r * (Math.sin(nextRad) - Math.sin(currentRad))
-        let dy = r * (Math.cos(currentRad) - Math.cos(nextRad))
-
-        console.log('dx: ', dx)
-        console.log('dy: ', dy)
-
-        // update position
-        const x = this.ball.position.x
-        const y = this.ball.position.y
-        Matter.Body.setPosition(this.ball, {x: x - dx, y: y - dy})
+        const angleStep = -1
+        this.moveBall(angleStep)
       })
       this.$bus.$on('rotate-backward', ($event) => {
         console.log('rotate backward')
+        const angleStep = 1
+        this.moveBall(angleStep)
       })
     },
     /*****************************************
@@ -202,6 +189,7 @@ export default {
     run () {
       // Matter.Sleeping.set(this.ball, false)
       Matter.Body.setStatic(this.ball, false)
+      this.activated = true
     },
     /*****************************************
     // refresh page
@@ -209,8 +197,45 @@ export default {
     reset () {
       window.location.reload(true)
     },
+    /*****************************************
+    // convert degree to radians
+    *****************************************/
     getRadians (deg) {
       return deg * Math.PI / 180
+    },
+    /*****************************************
+    // move the ball
+    *****************************************/
+    moveBall (angleStep) {
+      if (this.activated) {
+        return
+      }
+
+      // prepare angle values
+      let currentRad = this.getRadians(this.angle)
+      let nextRad = this.getRadians(this.angle + angleStep)
+      this.angle += angleStep
+
+      if (this.angle < 0) {
+        this.angle = 0
+        return
+      } else if (this.angle > 90) {
+        this.angle = 90
+        return
+      }
+
+      // do math to get the delta x and delta y
+      let r = this.constraint.length
+      let dx = r * (Math.sin(nextRad) - Math.sin(currentRad))
+      let dy = r * (Math.cos(currentRad) - Math.cos(nextRad))
+
+      console.log('dx: ', dx)
+      console.log('dy: ', dy)
+
+      // update position
+      const x = this.ball.position.x
+      const y = this.ball.position.y
+      Matter.Body.setPosition(this.ball, {x: x - dx, y: y - dy})
     }
   }
 }
