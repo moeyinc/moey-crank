@@ -12,7 +12,7 @@ var http = require('http');
  * Get port from environment and store in Express.
  */
 
-var port = normalizePort(process.env.PORT || '3200');
+var port = normalizePort(process.env.PORT || '3000');
 app.set('port', port);
 
 /**
@@ -88,3 +88,48 @@ function onListening() {
     : 'port ' + addr.port;
   debug('Listening on ' + bind);
 }
+
+/** ----------------------- added
+ * Listen on socket.io port
+ */
+
+var io = require('socket.io')(server);
+io.on('connection', function(socket){
+  console.log('a user connected');
+
+  socket.on('disconnect', function(){
+    console.log('a user disconnected');
+  });
+
+  // socket.on('chat message', function(msg) {
+  //   console.log('message: ' + msg);
+  //   io.emit('chat message', msg);
+  // })
+});
+
+/** ----------------------- added
+ * Listen on serialport
+ */
+
+var Serial = require('serialport');
+var SERIAL_PATH = '/dev/tty.usbmodem1709631'; // Teensy 3.2
+var BAUDRATE = 115200;
+var serialport = new Serial(SERIAL_PATH, {
+  baudRate: BAUDRATE
+}, function (err) {
+  if (err) {
+    return console.log('Error on opening serial port: ', err.message);
+  }
+  serialport.flush()
+  console.log('serial port on ' + SERIAL_PATH + ' has been opend!');
+});
+
+var Readline = Serial.parsers.Readline;
+var parser = new Readline();
+serialport.pipe(parser);
+
+parser.on('data', function(data) {
+  // when receiving data on serial port, emit it to socket.io
+  console.log('Received data on serial port: ', data);
+  io.emit('serialport', data);
+});
