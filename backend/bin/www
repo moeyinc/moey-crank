@@ -112,16 +112,15 @@ io.on('connection', function(socket){
  */
 
 var Serial = require('serialport');
-var SERIAL_PATH = '/dev/tty.usbmodem1709631'; // Teensy 3.2
-var BAUDRATE = 115200;
-var serialport = new Serial(SERIAL_PATH, {
-  baudRate: BAUDRATE
+var spConfig = require('./serialport-config.js')
+var serialport = new Serial(spConfig.SERIAL_PATH, {
+  baudRate: spConfig.BAUDRATE
 }, function (err) {
   if (err) {
     return console.log('Error on opening serial port: ', err.message);
   }
   serialport.flush()
-  console.log('serial port on ' + SERIAL_PATH + ' has been opend!');
+  console.log('serial port on ' + spConfig.SERIAL_PATH + ' has been opend!');
 });
 
 var Readline = Serial.parsers.Readline;

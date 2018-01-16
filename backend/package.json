@@ -3,7 +3,9 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start": "node ./bin/www"
+    "start": "node ./bin/www",
+    "start-moey-seiya": "cross-env ENV=MOEY_SEIYA node ./bin/www",
+    "start-surface": "cross-env ENV=SURFACE node ./bin/www"
   },
   "dependencies": {
     "body-parser": "~1.17.1",
