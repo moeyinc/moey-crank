@@ -95,7 +95,7 @@ export default {
 
       config.$bookBlock.bookblock({
         orientation : 'horizontal',
-        speed : 100, // 100
+        speed : 10, // 100
         shadowSides : 0.8,
         shadowFlip : 0.4
       })
